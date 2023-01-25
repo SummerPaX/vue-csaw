@@ -17,7 +17,7 @@ const secondClass = computed(() => {
 
 <template>
   <div class="bg-stone-800 text-white flex flex-col justify-center items-center min-h-screen">
-    <div class="flex flex-col w-fit">
+    <div class="flex flex-col w-fit transition-all">
       <div>
         <input type="checkbox" name="first" id="first" v-model="firstCheckbox">
         <label for="first"> First Checkbox</label>
