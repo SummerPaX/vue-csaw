@@ -1,61 +1,81 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, watchEffect } from 'vue';
-import { CraftBeer } from './interfaces';
-const beerList = ref<CraftBeer[]>([])
+import { ref, watch } from "vue";
 
-let debounceTimeout: number | null = null
-const filter = ref('')
-const food = ref('')
+const expression = ref("");
+const result = ref("0");
 
-watch([filter, food], async ([newFilter, newFood]) => {
-  if (debounceTimeout != null) { clearTimeout(debounceTimeout) }
+let debounceTimeout: number | null = null;
 
-  debounceTimeout = setTimeout(async () => {
-    let query = ''
-    if (newFilter != '' || newFood != null) {
-      let param = new URLSearchParams()
-      if (newFilter) {
-        param.append('beer_name', newFilter)
-      }
-      if (newFood) {
-        param.append('food', newFood)
-      }
+watch(expression, async (newFilter) => {
+	if (debounceTimeout != null) {
+		clearTimeout(debounceTimeout);
+	}
+	if (expression.value === "") {
+		result.value = "0";
+		return;
+	}
 
-      query = '?' + param.toString()
-    }
+	debounceTimeout = setTimeout(async () => {
+		const query = new URLSearchParams([["expr", expression.value]]);
 
-    const response = await fetch('https://api.punkapi.com/v2/beers/' + query)
-    const json: CraftBeer[] = await response.json()
+		const response = await fetch("http://api.mathjs.org/v4/?" + query.toString());
 
-    beerList.value = json
-    debounceTimeout = null
-  }, 500)
-}, { immediate: true })
+		let data = await response.text();
 
+		result.value = data;
+		debounceTimeout = null;
+	}, 1000);
+});
 </script>
 
 <template>
-  <div class="bg-stone-800 text-white flex flex-col items-center min-h-screen min-w-max">
-    <div class="flex flex-col w-fit">
-      <div class="flex items-center space-x-4">
-        <div class="text-3xl mb-4 h-8">Beers</div>
-        <input class="bg-stone-900 p-2 rounded-lg h-8" type="text" placeholder="name" v-model="filter">
-        <input class="bg-stone-900 p-2 rounded-lg h-8" type="text" placeholder="food" v-model="food">
-      </div>
-      <template v-for="beer in beerList" :key="beer.id">
-        <div class="bg-stone-900 mb-2 p-4 flex items-center space-x-4 rounded-lg">
-          <img class="w-4" v-if="beer.image_url != null" :src="beer.image_url" :alt="`Image of ${beer.name}`">
-          <div>
-            <span>{{ beer.id }}</span>
-            {{ beer.name }}
-            <p class="text-xs max-w-md">{{ beer.brewers_tips }}</p>
-          </div>
-        </div>
-      </template>
-    </div>
-  </div>
+	<div class="dark:bg-stone-800 dark:text-white flex flex-col items-center min-h-screen min-w-max">
+		<div class="flex flex-col w-fit justify-between space-y-2 p-10">
+			<div class="grid grid-cols-6 justify-items-center place-items-center gap-2 p-4 rounded-sm border-2 border-stone-900">
+				<p class="col-span-6 justify-self-end"><span>= </span>{{ result }}</p>
+				<input
+					v-model="expression"
+					type="text"
+					placeholder="ⅇ = ⅀n=0∞ 1n!"
+					class="border border-stone-900 dark:bg-stone-900 p-2 rounded-sm w-full text-right col-span-6"
+				/>
+				<button @click="expression += 'pi'" class="">π</button>
+				<button @click="expression += '!'" class="">x!</button>
+				<button @click="expression += '('" class="">(</button>
+				<button @click="expression += ')'" class="">)</button>
+				<button @click="expression += '%'" class="">%</button>
+				<button @click="expression = ''" class="">AC</button>
+				<button @click="expression += 'e'" class="">e</button>
+				<button @click="expression += 'log('" class="">ln</button>
+				<button @click="expression += '7'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">7</button>
+				<button @click="expression += '8'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">8</button>
+				<button @click="expression += '9'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">9</button>
+				<button @click="expression += '/'" class="">/</button>
+				<button @click="expression += 'sin('" class="">sin</button>
+				<button @click="expression += 'log('" class="">log</button>
+				<button @click="expression += '4'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">4</button>
+				<button @click="expression += '5'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">5</button>
+				<button @click="expression += '6'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">6</button>
+				<button @click="expression += '*'" class="">*</button>
+				<button @click="expression += 'cos'" class="">cos</button>
+				<button @click="expression += 'sqrt('" class="">√</button>
+				<button @click="expression += '1'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">1</button>
+				<button @click="expression += '2'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">2</button>
+				<button @click="expression += '3'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">3</button>
+				<button @click="expression += '-'" class="">-</button>
+				<button @click="expression += 'tan('" class="">tan</button>
+				<button @click="expression += '^'" class="">xⁿ</button>
+				<button @click="expression += '0'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">0</button>
+				<button @click="expression += '.'" class="bg-stone-200 hover:bg-stone-300 dark:bg-neutral-700 dark:hover:bg-neutral-600">.</button>
+				<button @click="expression = result.substring(2)" class="bg-blue-500 text-white hover:bg-blue-400 dark:bg-blue-700 dark:hover:bg-blue-600">=</button>
+				<button @click="expression += '+'" class="">+</button>
+			</div>
+		</div>
+	</div>
 </template>
 
-<style scoped>
-
+<style>
+button {
+	@apply bg-stone-300 hover:bg-stone-400 dark:bg-stone-900 w-12 h-8 dark:hover:bg-stone-700 rounded-sm;
+}
 </style>
