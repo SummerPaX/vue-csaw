@@ -5,7 +5,6 @@ import ApiCalculatorHistory from "./ApiCalculatorHistory.vue";
 const expression = ref("");
 const result = ref("0");
 const history = ref<string[]>([]);
-const dialog = ref<HTMLDialogElement>();
 
 let debounceTimeout: number | null = null;
 
@@ -35,8 +34,6 @@ function equalsPressed() {
 	history.value.push(expression.value);
 
 	expression.value = result.value;
-
-	dialog.value?.showModal();
 }
 </script>
 

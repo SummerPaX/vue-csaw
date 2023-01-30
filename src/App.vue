@@ -1,9 +1,5 @@
-<script setup lang="ts">
-import ApiCalculator from "./2023-01-26-Donnerstag/ApiCalculator.vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
-	<ApiCalculator />
+	<SchereSteinPapier />
 </template>
-
-<style></style>
